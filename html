@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>NasiceProdaja — Luxury</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="cssdio.css">
+  <style>
+    :root{
+      --bg:#0B0F14;
+      --panel:#111827;
+      --panel-2:#0F172A;
+      --text:#E8EDF5;
+      --muted:#A7B0C0;
+      --gold:#FBBF24;
+      --gold-2:#DDAF0A;
+      --danger:#B91C1C;
+      --shadow: 0 10px 30px rgba(0,0,0,.45);
+    }
+
+    body{
+      margin:0; font-family:Inter,system-ui,Segoe UI,Roboto,sans-serif; color:var(--text);
+      background: var(--bg);
+    }
+    .container{width:min(1120px,92%); margin:auto}
+    .gold{color:var(--gold)}
+
+    /* ===== Nav ===== */
+    .nav{position:sticky;top:0;z-index:50;background:#0B0F14;padding:14px 0;display:flex;justify-content:space-between;align-items:center}
+    .brand{font-weight:800;font-size:20px}
+    .nav-links{display:flex;gap:20px;align-items:center}
+    .nav-links a{color:var(--text);text-decoration:none}
+    .nav-links a:hover{color:var(--gold)}
+    .cart{position:relative;background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#1B1726;font-weight:700;border:none;border-radius:999px;padding:10px 16px;cursor:pointer}
+    .badge{position:absolute;top:-6px;right:-6px;background:#1B1726;color:var(--gold);border-radius:999px;width:22px;height:22px;display:grid;place-items:center;font-size:12px;font-weight:800}
+
+    /* ===== Products ===== */
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px}
+    .card{background:var(--panel);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);padding:20px;display:flex;flex-direction:column}
+    .title{font-size:20px;font-weight:800;margin:0 0 6px}
+    .desc{font-size:14px;color:var(--muted)}
+    .price{margin-top:auto;font-size:18px;font-weight:900}
+    .actions{margin-top:10px;display:flex;gap:10px}
+    .btn{flex:1;padding:10px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+    .btn.gold{background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#1B1726}
+
+    /* ===== Cart Modal ===== */
+    .modal-backdrop{
+      position:fixed;inset:0;background:rgba(0,0,0,0.65);display:none;justify-content:center;align-items:center;z-index:100;
+    }
+    .modal{
+      background:var(--panel-2);padding:20px;border-radius:16px;width:420px;max-width:90%;box-shadow:var(--shadow);
+    }
+    .modal h2{margin-top:0;margin-bottom:14px;color:var(--gold)}
+    .cart-items{max-height:300px;overflow-y:auto;margin-bottom:14px}
+    .cart-item{
+      display:flex;justify-content:space-between;align-items:center;
+      margin-bottom:8px;font-size:14px;padding:6px 8px;border-radius:8px;
+      background:rgba(255,255,255,0.02);position:relative;
+    }
+    .remove-btn{
+      opacity:0;transition:opacity .2s;cursor:pointer;
+      color:var(--danger);font-weight:900;font-size:16px;border:none;background:none;
+    }
+    .cart-item:hover .remove-btn{opacity:1}
+
+    .modal-actions{display:flex;justify-content:flex-end}
+    .close-btn{padding:10px 16px;border-radius:10px;font-weight:700;cursor:pointer;border:none;background:var(--danger);color:#fff}
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <div class="nav container" margin-top: 100px;>
+    <div class="brand">Nasice<span class="gold">Prodaja</span></div>
+    <div class="nav-links">
+      <a href="#">Home</a>
+      <a href="#">Collections</a>
+      <a href="#">About</a>
+      <button class="cart" id="cartBtn">Cart <span class="badge" id="cartCount">0</span></button>
+    </div>
+  </div>
+
+  <!-- Products -->
+  <main class="container"> 
+    <section class="grid">
+      <article class="card">
+        <h2 class="title">Classic Leather Wallet</h2>
+        <p class="desc">Hand-stitched Italian leather with RFID protection.</p>
+        <div class="price">$149</div>
+        <div class="actions">
+          <button class="btn gold" onclick="addToCart('Classic Leather Wallet',149)">Add to Cart</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 class="title">Stainless Steel Watch</h2>
+        <p class="desc">Japanese automatic movement with sapphire crystal.</p>
+        <div class="price">$629</div>
+        <div class="actions">
+          <button class="btn gold" onclick="addToCart('Stainless Steel Watch',629)">Add to Cart</button>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2 class="title">Wireless Headphones</h2>
+        <p class="desc">Noise cancellation with 30-hour battery life.</p>
+        <div class="price">$289</div>
+        <div class="actions">
+          <button class="btn gold" onclick="addToCart('Wireless Headphones',289)">Add to Cart</button>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <!-- Cart Modal -->
+  <div class="modal-backdrop" id="cartModal">
+    <div class="modal">
+      <h2>Your Cart</h2>
+      <div class="cart-items" id="cartItems"></div>
+      <div class="modal-actions">
+        <button class="close-btn" onclick="closeCart()">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const cartBtn = document.getElementById('cartBtn');
+    const cartCount = document.getElementById('cartCount');
+    const cartModal = document.getElementById('cartModal');
+    const cartItemsDiv = document.getElementById('cartItems');
+    let cart = [];
+
+    function addToCart(name, price){
+      cart.push({name, price});
+      cartCount.textContent = cart.length;
+      renderCart();
+    }
+
+    function removeFromCart(index){
+      cart.splice(index, 1);
+      cartCount.textContent = cart.length;
+      renderCart();
+    }
+
+    function renderCart(){
+      cartItemsDiv.innerHTML = '';
+      if(cart.length === 0){
+        cartItemsDiv.innerHTML = '<p>Your cart is empty.</p>';
+      } else {
+        cart.forEach((item, i)=>{
+          const div = document.createElement('div');
+          div.className = 'cart-item';
+          div.innerHTML = `<span>${item.name} - $${item.price}</span>
+                           <button class="remove-btn" onclick="removeFromCart(${i})">&times;</button>`;
+          cartItemsDiv.appendChild(div);
+        });
+      }
+    }
+
+    function openCart(){
+      renderCart();
+      cartModal.style.display = 'flex';
+    }
+    function closeCart(){
+      cartModal.style.display = 'none';
+    }
+
+    cartBtn.addEventListener('click', openCart);
+  </script>
+</body>
+</html>
