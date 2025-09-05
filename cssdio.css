@@ -1,0 +1,67 @@
+/* ===== Moj dio ===== */
+    .container{
+        margin-top: 100px;
+    }
+/* ===== Custom Scrollbar for Cart ===== */
+
+.cart-items::-webkit-scrollbar {
+  width: 8px;
+}
+.cart-items::-webkit-scrollbar-track {
+  background: var(--panel-2);
+  border-radius: 8px;
+}
+.cart-items::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, var(--gold), var(--gold-2));
+  border-radius: 8px;
+}
+.cart-items::-webkit-scrollbar-thumb:hover {
+  filter: brightness(1.1);
+}
+
+/* Firefox support */
+.cart-items {
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold) var(--panel-2);
+}
+/* ===== Cart Modal Larger ===== */
+.cart-modal {
+  position: fixed;
+  top: 80px;
+  right: 40px;                /* shift slightly more from edge */
+  width: 380px;               /* wider */
+  max-height: 500px;          /* taller */
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+  z-index: 1000;
+}
+
+/* ===== Cart Item Rows ===== */
+.cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;          /* more padding */
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: 16px;             /* slightly bigger text */
+}
+
+/* ===== Remove Button Larger ===== */
+.remove-btn {
+  margin-left: 14px;
+  color: var(--danger);
+  cursor: pointer;
+  font-weight: 900;
+  font-size: 22px;             /* bigger X */
+  opacity: .8;
+  transition: .2s ease;
+}
+.remove-btn:hover {
+  opacity: 1;
+  transform: scale(1.15);      /* subtle grow on hover */
+}
